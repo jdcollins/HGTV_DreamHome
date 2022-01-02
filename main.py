@@ -22,7 +22,7 @@ def enterSweeps(email):
 
     emailField = browser.find_element_by_name('xReturningUserEmail')
     emailField.send_keys(email)
-    time.sleep(1)
+    time.sleep(2)
     emailField.submit()
 
     time.sleep(6)
@@ -50,7 +50,7 @@ def enterSweeps(email):
 
     emailField = browser.find_element_by_name('xReturningUserEmail')
     emailField.send_keys(email)
-    time.sleep(1)
+    time.sleep(2)
     emailField.submit()
 
     time.sleep(6)
