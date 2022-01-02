@@ -1,0 +1,1 @@
+This Python script will automatically enter emails in the emails.txt text file to the HGTV 2022 dream home sweepstakes. 
