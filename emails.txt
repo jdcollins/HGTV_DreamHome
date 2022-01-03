@@ -1,0 +1,2 @@
+someone@example.com
+test@gmail.com
