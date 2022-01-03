@@ -3,6 +3,7 @@
 # (https://www.hgtv.com/sweepstakes/hgtv-dream-home)
 # Pre reqs:
 #   - You must have already done the initial entry for the email address to submit as this requires some manual information (Name, Cable Provider, Etc)
+#   - Any emails must be in a file named "emails.txt" in the same directory. One email address per line
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -75,6 +76,7 @@ emails = emailFile.readlines()
 emailFile.close()
 
 for e in emails:
+    e = e.strip()
     if (e != ""):
         print('Entering sweeps with: ' + e)
         enterSweeps(e)
