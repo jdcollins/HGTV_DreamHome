@@ -18,7 +18,7 @@ def enterSweeps(email):
     # Give the browser time to load
     time.sleep(6)
 
-    # HGTV has the email element bundled in an iframe, so we have to switch to that frame
+    # The email element is bundled in an iframe, so we have to switch to that frame
     browser.switch_to.frame(browser.find_element_by_id('ngxFrame207341'))
 
     emailField = browser.find_element_by_name('xReturningUserEmail')
@@ -35,10 +35,20 @@ def enterSweeps(email):
 
     time.sleep(2)
 
+    # Submit to HGTV
     enterButton = browser.find_element_by_xpath('/html/body/div[1]/div/main/section/div/div/div/div/div/div[1]/div/div[2]/form[2]/div[2]/div/button/span')
     enterButton.click()
 
-    time.sleep(5)
+    time.sleep(3)
+
+    # Check for success
+    feedbackText = browser.find_element_by_xpath('/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b').getText()
+    print(feedbackText)
+
+    if (feedbackText.strip() == "Thank You for Entering!"):
+        print("Successfully entered on HGTV site")
+    else:
+        print("Error: Submission to HGTV site failed")
 
     ## Food Network
     browser.get("https://www.foodnetwork.com/sponsored/sweepstakes/hgtv-dream-home-sweepstakes")
@@ -46,7 +56,7 @@ def enterSweeps(email):
     # Give the browser time to load
     time.sleep(6)
 
-    # HGTV has the email element bundled in an iframe, so we have to switch to that frame
+    # The email element is bundled in an iframe, so we have to switch to that frame
     browser.switch_to.frame(browser.find_element_by_id('ngxFrame207345'))
 
     emailField = browser.find_element_by_name('xReturningUserEmail')
@@ -66,7 +76,16 @@ def enterSweeps(email):
     enterButton = browser.find_element_by_xpath('/html/body/div[1]/div/main/section/div/div/div/div/div/div[1]/div/div[2]/form[2]/div[2]/div/button/span')
     enterButton.click()
 
-    time.sleep(5)
+    time.sleep(3)
+
+    # Check for success
+    feedbackText = browser.find_element_by_xpath('/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b').getText()
+    print(feedbackText)
+
+    if (feedbackText.strip() == "Thank You for Entering!"):
+        print("Successfully entered on FoodNetwork site")
+    else:
+        print("Error: Submission to FoodNetwork site failed")
 
     browser.quit()
 
