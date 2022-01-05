@@ -42,14 +42,17 @@ def enterSweeps(email):
     time.sleep(3)
 
     # Check for success
-    feedbackText = browser.find_element_by_xpath('/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b').getText()
+    feedbackElem = browser.find_element_by_xpath('/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b')
+    feedbackText = feedbackElem.text.strip()
     print(feedbackText)
 
-    if (feedbackText.strip() == "Thank You for Entering!"):
+    if (feedbackText == "Thank You for Entering!"):
         print("Successfully entered on HGTV site")
     else:
         print("Error: Submission to HGTV site failed")
 
+    time.sleep(1)
+    
     ## Food Network
     browser.get("https://www.foodnetwork.com/sponsored/sweepstakes/hgtv-dream-home-sweepstakes")
 
@@ -79,10 +82,11 @@ def enterSweeps(email):
     time.sleep(3)
 
     # Check for success
-    feedbackText = browser.find_element_by_xpath('/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b').getText()
+    feedbackElem = browser.find_element_by_xpath('/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b')
+    feedbackText = feedbackElem.text.strip()
     print(feedbackText)
 
-    if (feedbackText.strip() == "Thank You for Entering!"):
+    if (feedbackText == "Thank You for Entering!"):
         print("Successfully entered on FoodNetwork site")
     else:
         print("Error: Submission to FoodNetwork site failed")
