@@ -11,35 +11,52 @@ from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
-def enterSweeps(email):
-    browser = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-    browser.get("https://www.hgtv.com/sweepstakes/hgtv-dream-home/sweepstakes")
+browser = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+
+def navAndEnter(site, em):
+    url = ""
+    frameID = ""
+
+    if (site == "HGTV"):
+        url = "https://www.hgtv.com/sweepstakes/hgtv-dream-home/sweepstakes"
+        frameID = "ngxFrame207341"
+    elif (site == "FoodNetwork"):
+        url = "https://www.foodnetwork.com/sponsored/sweepstakes/hgtv-dream-home-sweepstakes"
+        frameID ="ngxFrame207345"
+    else:
+        print("Error: Unknown site...")
+        quit()
+
+    # Navigate to the URL
+    browser.get(url)
 
     # Give the browser time to load
-    time.sleep(6)
+    time.sleep(5)
 
     # The email element is bundled in an iframe, so we have to switch to that frame
-    browser.switch_to.frame(browser.find_element_by_id('ngxFrame207341'))
+    browser.switch_to.frame(browser.find_element_by_id(frameID))
 
+    # Submit the email address
     emailField = browser.find_element_by_name('xReturningUserEmail')
-    emailField.send_keys(email)
+    emailField.send_keys(em)
+
+    # The site appears to do some validation in the background so if you submit too
+    # quickly, you will receive an error message instead of proceeding on the form
     time.sleep(2)
     emailField.submit()
 
-    time.sleep(6)
+    # Wait for the next screen / ads to load after submission
+    time.sleep(3)
 
-    # Back out of the iframe where we enter the email
-
+    # We need to go to the bottom of the outter page to be able to see the enter button
     html = browser.find_element_by_tag_name('html')
     html.send_keys(Keys.END)
+    time.sleep(1)
 
-    time.sleep(2)
-
-    # Submit to HGTV
+    # Click the Enter Button
     enterButton = browser.find_element_by_xpath('/html/body/div[1]/div/main/section/div/div/div/div/div/div[1]/div/div[2]/form[2]/div[2]/div/button/span')
     enterButton.click()
-
-    time.sleep(3)
+    time.sleep(2)
 
     # Check for success
     feedbackElem = browser.find_element_by_xpath('/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b')
@@ -47,51 +64,15 @@ def enterSweeps(email):
     print(feedbackText)
 
     if (feedbackText == "Thank You for Entering!"):
-        print("Successfully entered on HGTV site")
+        print("Successfully entered on " + site + " site")
     else:
-        print("Error: Submission to HGTV site failed")
+        print("Error: Submission to " + site + " site failed")
 
     time.sleep(1)
-    
-    ## Food Network
-    browser.get("https://www.foodnetwork.com/sponsored/sweepstakes/hgtv-dream-home-sweepstakes")
 
-    # Give the browser time to load
-    time.sleep(6)
-
-    # The email element is bundled in an iframe, so we have to switch to that frame
-    browser.switch_to.frame(browser.find_element_by_id('ngxFrame207345'))
-
-    emailField = browser.find_element_by_name('xReturningUserEmail')
-    emailField.send_keys(email)
-    time.sleep(2)
-    emailField.submit()
-
-    time.sleep(6)
-
-    # Back out of the iframe where we enter the email
-
-    html = browser.find_element_by_tag_name('html')
-    html.send_keys(Keys.END)
-
-    time.sleep(2)
-
-    enterButton = browser.find_element_by_xpath('/html/body/div[1]/div/main/section/div/div/div/div/div/div[1]/div/div[2]/form[2]/div[2]/div/button/span')
-    enterButton.click()
-
-    time.sleep(3)
-
-    # Check for success
-    feedbackElem = browser.find_element_by_xpath('/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b')
-    feedbackText = feedbackElem.text.strip()
-    print(feedbackText)
-
-    if (feedbackText == "Thank You for Entering!"):
-        print("Successfully entered on FoodNetwork site")
-    else:
-        print("Error: Submission to FoodNetwork site failed")
-
-    browser.quit()
+def enterSweeps(email):
+    navAndEnter("HGTV", email)
+    navAndEnter("FoodNetwork", email)
 
 # Check for emails to submit
 emailFile = open('emails.txt')
@@ -103,3 +84,5 @@ for e in emails:
     if (e != ""):
         print('Entering sweeps with: ' + e)
         enterSweeps(e)
+
+browser.quit()
