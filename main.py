@@ -31,7 +31,7 @@ def navAndEnter(site, em):
     browser.get(url)
 
     # Give the browser time to load
-    time.sleep(5)
+    time.sleep(4)
 
     # The email element is bundled in an iframe, so we have to switch to that frame
     browser.switch_to.frame(browser.find_element_by_id(frameID))
@@ -42,11 +42,11 @@ def navAndEnter(site, em):
 
     # The site appears to do some validation in the background so if you submit too
     # quickly, you will receive an error message instead of proceeding on the form
-    time.sleep(2)
+    time.sleep(1)
     emailField.submit()
 
     # Wait for the next screen / ads to load after submission
-    time.sleep(3)
+    time.sleep(2)
 
     # We need to go to the bottom of the outter page to be able to see the enter button
     html = browser.find_element_by_tag_name('html')
@@ -56,7 +56,7 @@ def navAndEnter(site, em):
     # Click the Enter Button
     enterButton = browser.find_element_by_xpath('/html/body/div[1]/div/main/section/div/div/div/div/div/div[1]/div/div[2]/form[2]/div[2]/div/button/span')
     enterButton.click()
-    time.sleep(2)
+    time.sleep(1)
 
     # Check for success
     feedbackElem = browser.find_element_by_xpath('/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b')
