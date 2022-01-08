@@ -27,11 +27,9 @@ def navAndEnter(site, em):
         print("Error: Unknown site...")
         quit()
 
-    # Navigate to the URL
+    # Navigate to the URL and give the site time to load
     browser.get(url)
-
-    # Give the browser time to load
-    time.sleep(4)
+    time.sleep(3)
 
     # The email element is bundled in an iframe, so we have to switch to that frame
     browser.switch_to.frame(browser.find_element_by_id(frameID))
@@ -61,12 +59,11 @@ def navAndEnter(site, em):
     # Check for success
     feedbackElem = browser.find_element_by_xpath('/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b')
     feedbackText = feedbackElem.text.strip()
-    print(feedbackText)
 
     if (feedbackText == "Thank You for Entering!"):
-        print("Successfully entered on " + site + " site")
+        print("Successfully entered " + em + " on " + site + " site")
     else:
-        print("Error: Submission to " + site + " site failed")
+        print("Error: Submitting " + em + " to " + site + " site failed")
 
     time.sleep(1)
 
