@@ -8,6 +8,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
@@ -32,10 +33,10 @@ def navAndEnter(site, em):
     time.sleep(3)
 
     # The email element is bundled in an iframe, so we have to switch to that frame
-    browser.switch_to.frame(browser.find_element_by_id(frameID))
+    browser.switch_to.frame(browser.find_element(By.ID, frameID))
 
     # Submit the email address
-    emailField = browser.find_element_by_name('xReturningUserEmail')
+    emailField = browser.find_element(By.NAME, 'xReturningUserEmail')
     emailField.send_keys(em)
 
     # The site appears to do some validation in the background so if you submit too
@@ -47,17 +48,17 @@ def navAndEnter(site, em):
     time.sleep(2)
 
     # We need to go to the bottom of the outter page to be able to see the enter button
-    html = browser.find_element_by_tag_name('html')
+    html = browser.find_element(By.TAG_NAME, 'html')
     html.send_keys(Keys.END)
     time.sleep(1)
 
     # Click the Enter Button
-    enterButton = browser.find_element_by_xpath('/html/body/div[1]/div/main/section/div/div/div/div/div/div[1]/div/div[2]/form[2]/div[2]/div/button/span')
+    enterButton = browser.find_element(By.XPATH, '/html/body/div[1]/div/main/section/div/div/div/div/div/div[1]/div/div[2]/form[2]/div[2]/div/button/span')
     enterButton.click()
     time.sleep(1)
 
     # Check for success
-    feedbackElem = browser.find_element_by_xpath('/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b')
+    feedbackElem = browser.find_element(By. XPATH, '/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b')
     feedbackText = feedbackElem.text.strip()
 
     if (feedbackText == "Thank You for Entering!"):
