@@ -10,9 +10,11 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
+from datetime import datetime
 import time
 
 browser = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+logFile = open('log.txt', 'a')
 
 def navAndEnter(site, em):
     url = ""
@@ -63,14 +65,20 @@ def navAndEnter(site, em):
 
     if (feedbackText == "Thank You for Entering!"):
         print("Successfully entered " + em + " on " + site + " site")
+        logFile.write("Successfully entered " + em + " on " + site + " site" + '\n')
     else:
         print("Error: Submitting " + em + " to " + site + " site failed")
+        logFile.write("Error: Submitting " + em + " to " + site + " site failed" + '\n')
 
     time.sleep(1)
 
 def enterSweeps(email):
     navAndEnter("HGTV", email)
     navAndEnter("FoodNetwork", email)
+
+now = datetime.now()
+dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+logFile.write('--> Begin: ' + dt_string + '\n')
 
 # Check for emails to submit
 emailFile = open('emails.txt')
@@ -84,3 +92,9 @@ for e in emails:
         enterSweeps(e)
 
 browser.quit()
+
+now = datetime.now()
+dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+logFile.write('<-- End: ' + dt_string + '\n')
+
+logFile.close()
