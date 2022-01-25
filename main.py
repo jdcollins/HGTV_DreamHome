@@ -12,6 +12,7 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 from datetime import datetime
 import time
+import os
 
 browser = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 logFile = open('log.txt', 'a')
@@ -32,10 +33,17 @@ def navAndEnter(site, em):
 
     # Navigate to the URL and give the site time to load
     browser.get(url)
-    time.sleep(3)
 
     # The email element is bundled in an iframe, so we have to switch to that frame
-    browser.switch_to.frame(browser.find_element(By.ID, frameID))
+    while True:
+        try:
+            browser.switch_to.frame(browser.find_element(By.ID, frameID))
+        except:
+            print('Waiting for frame to become ready')
+            time.sleep(1)
+            continue
+        else:
+            break
 
     # Submit the email address
     emailField = browser.find_element(By.NAME, 'xReturningUserEmail')
@@ -47,7 +55,7 @@ def navAndEnter(site, em):
     emailField.submit()
 
     # Wait for the next screen / ads to load after submission
-    time.sleep(2)
+    time.sleep(1)
 
     # We need to go to the bottom of the outter page to be able to see the enter button
     html = browser.find_element(By.TAG_NAME, 'html')
@@ -55,20 +63,39 @@ def navAndEnter(site, em):
     time.sleep(1)
 
     # Click the Enter Button
-    enterButton = browser.find_element(By.XPATH, '/html/body/div[1]/div/main/section/div/div/div/div/div/div[1]/div/div[2]/form[2]/div[2]/div/button/span')
+    while True:
+        try:
+            enterButton = browser.find_element(By.XPATH, '/html/body/div[1]/div/main/section/div/div/div/div/div/div[1]/div/div[2]/form[2]/div[2]/div/button/span')
+        except:
+            print('Locating the enter button')
+            time.sleep(1)
+        else:
+            break
+    
     enterButton.click()
-    time.sleep(1)
 
     # Check for success
-    feedbackElem = browser.find_element(By. XPATH, '/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b')
+    while True:
+        try:
+            feedbackElem = browser.find_element(By. XPATH, '/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b')
+        except:
+            print('Locating the feedback text')
+            time.sleep(1)
+        else:
+            break
+    
     feedbackText = feedbackElem.text.strip()
 
     if (feedbackText == "Thank You for Entering!"):
         print("Successfully entered " + em + " on " + site + " site")
         logFile.write("Successfully entered " + em + " on " + site + " site" + '\n')
+        logFile.flush()
+        os.fsync(logFile.fileno())
     else:
         print("Error: Submitting " + em + " to " + site + " site failed")
         logFile.write("Error: Submitting " + em + " to " + site + " site failed" + '\n')
+        logFile.flush()
+        os.fsync(logFile.fileno())
 
     time.sleep(1)
 
@@ -77,8 +104,10 @@ def enterSweeps(email):
     navAndEnter("FoodNetwork", email)
 
 now = datetime.now()
-dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+dt_string = now.strftime("%m/%d/%Y %H:%M:%S")
 logFile.write('--> Begin: ' + dt_string + '\n')
+logFile.flush()
+os.fsync(logFile.fileno())
 
 # Check for emails to submit
 emailFile = open('emails.txt')
@@ -96,5 +125,7 @@ browser.quit()
 now = datetime.now()
 dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 logFile.write('<-- End: ' + dt_string + '\n')
+logFile.flush()
+os.fsync(logFile.fileno())
 
 logFile.close()
