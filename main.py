@@ -53,31 +53,12 @@ def navAndEnter(site, em):
     # quickly, you will receive an error message instead of proceeding on the form
     time.sleep(1)
     emailField.submit()
-
-    # Wait for the next screen / ads to load after submission
     time.sleep(1)
-
-    # We need to go to the bottom of the outter page to be able to see the enter button
-    html = browser.find_element(By.TAG_NAME, 'html')
-    html.send_keys(Keys.END)
-    time.sleep(1)
-
-    # Click the Enter Button
-    while True:
-        try:
-            enterButton = browser.find_element(By.XPATH, '/html/body/div[1]/div/main/section/div/div/div/div/div/div[1]/div/div[2]/form[2]/div[2]/div/button/span')
-        except:
-            print('Locating the enter button')
-            time.sleep(1)
-        else:
-            break
     
-    enterButton.click()
-
-    # Check for success
+    # Check for errors on this screen
     while True:
         try:
-            feedbackElem = browser.find_element(By. XPATH, '/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b')
+            feedbackElem = browser.find_element(By.XPATH, '/html/body/div[1]/div/main/section/div/div/div/div/div/div[2]/div/div/div/div/div/p/b')
         except:
             print('Locating the feedback text')
             time.sleep(1)
@@ -86,18 +67,57 @@ def navAndEnter(site, em):
     
     feedbackText = feedbackElem.text.strip()
 
-    if (feedbackText == "Thank You for Entering!"):
-        print("Successfully entered " + em + " on " + site + " site")
-        logFile.write("Successfully entered " + em + " on " + site + " site" + '\n')
+    if (feedbackText == "Sorry! You've already entered today. Please come back tomorrow to try again."):
+        print("Error: Already entered " + em + " on " + site + " site")
+        logFile.write("Error: Already entered " + em + " on " + site + " site" + '\n')
         logFile.flush()
         os.fsync(logFile.fileno())
+        return
     else:
-        print("Error: Submitting " + em + " to " + site + " site failed")
-        logFile.write("Error: Submitting " + em + " to " + site + " site failed" + '\n')
-        logFile.flush()
-        os.fsync(logFile.fileno())
+        # Wait for the next screen / ads to load after submission
+        time.sleep(1)
 
-    time.sleep(1)
+        # We need to go to the bottom of the outter page to be able to see the enter button
+        html = browser.find_element(By.TAG_NAME, 'html')
+        html.send_keys(Keys.END)
+        time.sleep(1)
+
+        # Click the Enter Button
+        while True:
+            try:
+                enterButton = browser.find_element(By.XPATH, '/html/body/div[1]/div/main/section/div/div/div/div/div/div[1]/div/div[2]/form[2]/div[2]/div/button/span')
+            except:
+                print('Locating the enter button')
+                time.sleep(1)
+            else:
+                break
+        
+        enterButton.click()
+
+        # Check for success
+        while True:
+            try:
+                feedbackElem = browser.find_element(By.XPATH, '/html/body/section/div[3]/div[3]/div/div[2]/div[1]/div/div[3]/div[1]/section/p/b')
+            except:
+                print('Locating the feedback text')
+                time.sleep(1)
+            else:
+                break
+        
+        feedbackText = feedbackElem.text.strip()
+
+        if (feedbackText == "Thank You for Entering!"):
+            print("Successfully entered " + em + " on " + site + " site")
+            logFile.write("Successfully entered " + em + " on " + site + " site" + '\n')
+            logFile.flush()
+            os.fsync(logFile.fileno())
+        else:
+            print("Error: Submitting " + em + " to " + site + " site failed")
+            logFile.write("Error: Submitting " + em + " to " + site + " site failed" + '\n')
+            logFile.flush()
+            os.fsync(logFile.fileno())
+
+        time.sleep(1)
 
 def enterSweeps(email):
     navAndEnter("HGTV", email)
