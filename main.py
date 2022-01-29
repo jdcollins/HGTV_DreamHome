@@ -16,6 +16,14 @@ import os
 
 browser = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 logFile = open('log.txt', 'a')
+debugging = True
+
+def printAndLog(message):
+    if (debugging):
+        print(message)
+    logFile.write(message + '\n')
+    logFile.flush()
+    os.fsync(logFile.fileno())
 
 def navAndEnter(site, em):
     url = ""
@@ -28,7 +36,7 @@ def navAndEnter(site, em):
         url = "https://www.foodnetwork.com/sponsored/sweepstakes/hgtv-dream-home-sweepstakes"
         frameID ="ngxFrame207345"
     else:
-        print("Error: Unknown site...")
+        printAndLog("Error: Unknown site...")
         quit()
 
     # Navigate to the URL and give the site time to load
@@ -68,10 +76,7 @@ def navAndEnter(site, em):
     feedbackText = feedbackElem.text.strip()
 
     if (feedbackText == "Sorry! You've already entered today. Please come back tomorrow to try again."):
-        print("Error: Already entered " + em + " on " + site + " site")
-        logFile.write("Error: Already entered " + em + " on " + site + " site" + '\n')
-        logFile.flush()
-        os.fsync(logFile.fileno())
+        printAndLog("Error: Already entered " + em + " on " + site + " site")
         return
     else:
         # Wait for the next screen / ads to load after submission
@@ -107,15 +112,9 @@ def navAndEnter(site, em):
         feedbackText = feedbackElem.text.strip()
 
         if (feedbackText == "Thank You for Entering!"):
-            print("Successfully entered " + em + " on " + site + " site")
-            logFile.write("Successfully entered " + em + " on " + site + " site" + '\n')
-            logFile.flush()
-            os.fsync(logFile.fileno())
+            printAndLog("Successfully entered " + em + " on " + site + " site")
         else:
-            print("Error: Submitting " + em + " to " + site + " site failed")
-            logFile.write("Error: Submitting " + em + " to " + site + " site failed" + '\n')
-            logFile.flush()
-            os.fsync(logFile.fileno())
+            printAndLog("Error: Submitting " + em + " to " + site + " site failed")
 
         time.sleep(1)
 
@@ -125,9 +124,7 @@ def enterSweeps(email):
 
 now = datetime.now()
 dt_string = now.strftime("%m/%d/%Y %H:%M:%S")
-logFile.write('--> Begin: ' + dt_string + '\n')
-logFile.flush()
-os.fsync(logFile.fileno())
+printAndLog('--> Begin: ' + dt_string)
 
 # Check for emails to submit
 emailFile = open('emails.txt')
@@ -137,15 +134,13 @@ emailFile.close()
 for e in emails:
     e = e.strip()
     if (e != ""):
-        print('Entering sweeps with: ' + e)
+        printAndLog('Entering sweeps with: ' + e)
         enterSweeps(e)
 
 browser.quit()
 
 now = datetime.now()
-dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-logFile.write('<-- End: ' + dt_string + '\n')
-logFile.flush()
-os.fsync(logFile.fileno())
+dt_string = now.strftime("%m/%d/%Y %H:%M:%S")
+printAndLog('<-- End: ' + dt_string)
 
 logFile.close()
